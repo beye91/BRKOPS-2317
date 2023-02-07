@@ -1,0 +1,49 @@
+devices:
+  nxos01:
+    type: nxos
+    os: nxos
+    credentials:
+      default:
+        username: admin
+        password: cisco
+    connections:
+      cli:
+        protocol: ssh
+        ip: "10.10.10.211"
+        port: 22 
+  nxos02:
+    type: nxos
+    os: nxos
+    credentials:
+      default:
+        username: admin
+        password: cisco
+    connections:
+      cli:
+        protocol: ssh
+        ip: "10.10.10.212"
+        port: 22 
+  nxos03:
+    type: nxos
+    os: nxos
+    credentials:
+      default:
+        username: admin
+        password: cisco
+    connections:
+      cli:
+        protocol: ssh
+        ip: "10.10.10.213"
+        port: 22 
+  nxos04:
+    type: nxos
+    os: nxos
+    credentials:
+      default:
+        username: admin
+        password: cisco
+    connections:
+      cli:
+        protocol: ssh
+        ip: "10.10.10.214"
+        port: 22

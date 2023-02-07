@@ -1,0 +1,20 @@
+
+2022-12-13 03:31:08,558: %UNICON-INFO: +++ SWITCH01-TWIN logfile snapshot/connection_SWITCH01-TWIN.txt +++
+
+2022-12-13 03:31:08,558: %UNICON-INFO: +++ Unicon plugin ios (unicon.plugins.ios) +++
+Unable to negotiate with 10.10.10.220 port 22: no matching key exchange method found. Their offer: diffie-hellman-group-exchange-sha1,diffie-hellman-group14-sha1
+
+
+2022-12-13 03:31:08,635: %UNICON-INFO: +++ connection to spawn: ssh -l ansible 10.10.10.220, id: 139794721175200 +++
+
+2022-12-13 03:31:08,636: %UNICON-INFO: connection to SWITCH01-TWIN
+
+2022-12-13 03:33:51,987: %UNICON-INFO: +++ SWITCH01-TWIN logfile snapshot/connection_SWITCH01-TWIN.txt +++
+
+2022-12-13 03:33:51,987: %UNICON-INFO: +++ Unicon plugin ios (unicon.plugins.ios) +++
+Unable to negotiate with 10.10.10.220 port 22: no matching key exchange method found. Their offer: diffie-hellman-group-exchange-sha1,diffie-hellman-group14-sha1
+
+
+2022-12-13 03:33:52,063: %UNICON-INFO: +++ connection to spawn: ssh -l ansible 10.10.10.220, id: 140429696808464 +++
+
+2022-12-13 03:33:52,064: %UNICON-INFO: connection to SWITCH01-TWIN

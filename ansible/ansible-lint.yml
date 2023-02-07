@@ -1,0 +1,4 @@
+warn_list:  # or 'skip_list' to silence them completely
+  - syntax-check[specific]  # Ansible syntax check failed.
+
+
