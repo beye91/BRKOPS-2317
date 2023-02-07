@@ -1,0 +1,120 @@
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH != "main" && $CI_PIPELINE_SOURCE != "merge_request_event"
+      when: never
+    - when: always
+
+variables:
+  IMAGE_NAME_ANSIBLE: $CI_REGISTRY_IMAGE/ansible  
+  IMAGE_TAG_ANSIBLE: "1.0"
+
+stages:
+  - build 
+  - create_digital-twin
+  - validate_ansible_syntax
+  - configure_devices_digital-twin
+  - test_digital-twin
+  - configure_devices_prod
+  - test_production
+build_image:
+  stage: build
+  tags:
+    - local-runner
+  script:
+    - docker build -t $IMAGE_NAME_ANSIBLE:$IMAGE_TAG_ANSIBLE .
+
+push_image:
+  stage: build
+  needs:
+    - build_image
+  tags:
+    - local-runner
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker push $IMAGE_NAME_ANSIBLE:$IMAGE_TAG_ANSIBLE
+
+run_create_digital-twin:
+  stage: create_digital-twin
+  tags:
+    - local-runner
+  script: 
+    - ./cml_create_digital-twin.sh -d -f
+
+run_wait:
+  stage: create_digital-twin
+  needs:
+    - run_create_digital-twin
+  tags:
+    - local-runner
+  script: 
+    - sleep 20
+
+validate_ansible_syntax:
+  stage: validate_ansible_syntax
+  needs:
+    - run_wait
+  tags:
+    - local-runner
+  before_script:
+    - cd ansible
+  script:
+    - ansible-playbook 01_interface_configuration.yaml --syntax-check
+
+configure_devices_digital-twin:
+  stage: configure_devices_digital-twin
+  needs:
+    - validate_ansible_syntax
+  tags:
+    - local-runner
+  before_script:
+    - cd ansible
+  script:
+    - ansible-playbook 01_interface_configuration.yaml --extra-vars "host_var=digital_twin"
+
+run_test_interface_digital-twin:
+  stage: test_digital-twin
+  needs:
+    - configure_devices_digital-twin
+  tags:
+    - local-runner
+  before_script:
+    - cd robot_framework
+  script:
+    - robot --outputdir /tmp/robot_framework_reports server_port_digital-twin.robot
+  artifacts:
+    untracked: false
+    when: always
+    expire_in: "1 days"
+    paths:
+      - "tmp/robot_framework_reports/log.html"
+      - "tmp/robot_framework_reports/report.html"
+
+run_configure_devices_prod:
+  stage: configure_devices_prod
+  needs:
+    - run_test_interface_digital-twin
+  tags:
+    - local-runner
+  before_script:
+    - cd ansible
+  script: 
+    - ansible-playbook 01_interface_configuration.yaml --extra-vars "host_var=production"
+
+run_test_interface_production:
+  stage: test_production
+  needs:
+    - run_configure_devices_prod
+  tags:
+    - local-runner
+  before_script:
+    - cd robot_framework
+  script:
+    - robot --outputdir /tmp/robot_framework_reports server_port_production.robot
+  artifacts:
+    untracked: false
+    when: always
+    expire_in: "1 days"
+    paths:
+      - "tmp/robot_framework_reports/log.html"
+      - "tmp/robot_framework_reports/report.html"
