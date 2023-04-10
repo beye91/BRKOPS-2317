@@ -1,0 +1,5 @@
+[production]
+NXOS01 ansible_host=10.10.10.201
+NXOS02 ansible_host=10.10.10.202
+NXOS03 ansible_host=10.10.10.203
+NXOS04 ansible_host=10.10.10.204

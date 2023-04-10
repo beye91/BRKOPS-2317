@@ -1,0 +1,5 @@
+[digital_twin]
+NXOS01 ansible_host=10.10.10.211
+NXOS02 ansible_host=10.10.10.212
+NXOS03 ansible_host=10.10.10.213
+NXOS04 ansible_host=10.10.10.214

@@ -1,11 +1,2 @@
-[digital_twin]
-NXOS01-TWIN ansible_host=10.10.10.211 interface_ip=172.16.16.211
-NXOS02-TWIN ansible_host=10.10.10.212 interface_ip=172.16.16.212
-NXOS03-TWIN ansible_host=10.10.10.213 interface_ip=172.16.16.213
-NXOS04-TWIN ansible_host=10.10.10.214 interface_ip=172.16.16.214
-
-[production]
-NXOS01-PROD ansible_host=10.10.10.201 interface_ip=172.16.16.211
-NXOS02-PROD ansible_host=10.10.10.202 interface_ip=172.16.16.212
-NXOS03-PROD ansible_host=10.10.10.203 interface_ip=172.16.16.213
-NXOS04-PROD ansible_host=10.10.10.204 interface_ip=172.16.16.214
+[cml_host]
+CML ansible_host=10.122.49.111

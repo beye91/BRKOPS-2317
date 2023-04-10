@@ -1,3 +1,5 @@
+---
+
 ansible_network_os: cisco.nxos.nxos
 ansible_connection: ansible.netcommon.network_cli
 ansible_port: 22

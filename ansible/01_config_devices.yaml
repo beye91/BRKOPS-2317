@@ -1,0 +1,73 @@
+---
+
+- name: Configure VLAN and interface # Configure devices
+  hosts: "{{ host_var|default([]) }}"
+  gather_facts: false
+  serial: 1
+  order: sorted
+
+  tasks:
+
+    - name: Load variables # Load fabric data from file
+      ansible.builtin.include_vars:
+        file: data/switch_configuration.yaml
+        name: switch_configuration
+
+    - name: Show version command
+      cisco.nxos.nxos_command:
+        commands:
+          - show version
+          - show interface mgmt0
+      register: show_version_output
+      until: show_version_output is success
+      retries: 50
+      delay: 30
+
+    - name: Display the show version output
+      ansible.builtin.debug:
+        var: show_version_output.stdout_lines
+
+
+    - name: Create VLAN # Create VLAN
+      cisco.nxos.nxos_vlans:
+        config:
+          - vlan_id: '{{ item.vlan_id }}'
+            name: '{{ item.vlan_name }}'
+        state: merged
+      with_items:
+        - '{{ switch_configuration[inventory_hostname].vlan }}'
+
+    - name: Configure interface # Configure interface
+      cisco.nxos.nxos_interfaces:
+        config:
+        - name: '{{ item.name }}'
+          description: Configured by Ansible
+          enabled: true
+      with_items:
+        - '{{ switch_configuration[inventory_hostname].interfaces }}'
+
+    - name: Configure access VLAN on interface # Configure access VLAN on interface
+      cisco.nxos.nxos_l2_interfaces:
+        config:
+          - name: '{{ item.name }}'
+            access:
+              vlan: '{{ item.vlan }}'
+        state: merged
+      with_items:
+        - '{{ switch_configuration[inventory_hostname].interfaces }}'
+
+    - name: Ensure the feature is enabled # Ensure the feature is enabled
+      cisco.nxos.nxos_feature:
+        feature: '{{ item.feature_name }}'
+        state: enabled
+      with_items:
+        - '{{ switch_configuration[inventory_hostname].feature }}'
+
+    - name: Configure VLAN interface # Configure VLAN interface
+      cisco.nxos.nxos_config:
+        lines:
+          - interface {{ item.name }}
+          - ip address {{ item.address }} {{ item.netmask }}
+          - no shutdown
+      with_items:
+        - '{{ switch_configuration[inventory_hostname].interface_vlan }}'

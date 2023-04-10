@@ -1,0 +1,834 @@
+lab:
+  description: ''
+  notes: ''
+  title: BRKOPS-2317_DIGITAL-TWIN
+  version: 0.2.0
+links:
+  - id: l0
+    n1: n4
+    n2: n5
+    i1: i0
+    i2: i0
+    label: ext-conn-0-port<->unmanaged-switch-0-port0
+  - id: l1
+    n1: n0
+    n2: n5
+    i1: i1
+    i2: i1
+    label: nxos9000-0-mgmt0<->unmanaged-switch-0-port1
+  - id: l2
+    n1: n2
+    n2: n5
+    i1: i1
+    i2: i2
+    label: nxos9000-2-mgmt0<->unmanaged-switch-0-port2
+  - id: l3
+    n1: n1
+    n2: n5
+    i1: i1
+    i2: i3
+    label: nxos9000-1-mgmt0<->unmanaged-switch-0-port3
+  - id: l4
+    n1: n3
+    n2: n5
+    i1: i1
+    i2: i4
+    label: nxos9000-3-mgmt0<->unmanaged-switch-0-port4
+  - id: l5
+    n1: n0
+    n2: n1
+    i1: i2
+    i2: i2
+    label: nxos9000-0-Ethernet1/1<->nxos9000-1-Ethernet1/1
+  - id: l6
+    n1: n2
+    n2: n3
+    i1: i2
+    i2: i2
+    label: nxos9000-2-Ethernet1/1<->nxos9000-3-Ethernet1/1
+  - id: l7
+    n1: n0
+    n2: n3
+    i1: i3
+    i2: i3
+    label: nxos9000-0-Ethernet1/2<->nxos9000-3-Ethernet1/2
+  - id: l8
+    n1: n1
+    n2: n2
+    i1: i3
+    i2: i3
+    label: nxos9000-1-Ethernet1/2<->nxos9000-2-Ethernet1/2
+  - id: l9
+    n1: n0
+    n2: n2
+    i1: i4
+    i2: i4
+    label: nxos01-Ethernet1/3<->nxos03-Ethernet1/3
+  - id: l10
+    n1: n1
+    n2: n3
+    i1: i4
+    i2: i4
+    label: nxos02-Ethernet1/3<->nxos04-Ethernet1/3
+  - id: l11
+    n1: n2
+    n2: n8
+    i1: i5
+    i2: i0
+    label: nxos03-Ethernet1/4<->alpine-2-eth0
+  - id: l12
+    n1: n7
+    n2: n1
+    i1: i0
+    i2: i5
+    label: alpine-1-eth0<->nxos02-Ethernet1/4
+  - id: l13
+    n1: n0
+    n2: n6
+    i1: i5
+    i2: i0
+    label: nxos01-Ethernet1/4<->alpine-0-eth0
+  - id: l14
+    n1: n3
+    n2: n9
+    i1: i5
+    i2: i0
+    label: nxos04-Ethernet1/4<->alpine-3-eth0
+nodes:
+  - boot_disk_size: null
+    configuration: |2-
+
+      !Command: show running-config
+      !Running configuration last done at: Mon Feb  6 17:35:06 2023
+      !Time: Mon Feb  6 17:35:08 2023
+      !
+      hostname nxos01
+      feature lacp
+      feature vpc
+      system default switchport 
+      !
+      no password strength-check
+      username admin password 5 $5$LBKHHI$HSPB7Xwnf.dE0KjJegQXITX0iyP.BDwOM8.2p6wz/D8  role network-admin
+      username cisco password 5 $5$JJIHBO$N5mIGPNPe6Cn1qJXZzwUNiBLbCA9yI7p2Mv/RBRPZ17  role network-admin
+      username cisco passphrase  lifetime 99999 warntime 14 gracetime 3
+      no ip domain-lookup
+      !
+      vrf context management
+      vpc domain 101
+        peer-switch
+        peer-keepalive destination 10.10.10.212 source 10.10.10.211
+        peer-gateway
+      !
+      interface port-channel1
+        switchport
+        switchport mode trunk
+        vpc 100
+      !
+      interface port-channel101
+        switchport
+        switchport mode trunk
+        spanning-tree port type network
+        vpc peer-link
+      !
+      interface Ethernet1/1
+        switchport
+        switchport mode trunk
+        channel-group 101 mode active
+      !
+      interface Ethernet1/2
+        switchport
+        switchport mode trunk
+        channel-group 1 mode active
+      !
+      interface Ethernet1/3
+        switchport
+        switchport mode trunk
+        channel-group 1 mode active
+      !
+      interface mgmt0
+        vrf member management
+        ip address 10.10.10.211/24
+      !
+      boot nxos bootflash:/nxos.9.3.10.bin sup-1
+      logging console
+    cpu_limit: null
+    cpus: null
+    data_volume: null
+    hide_links: false
+    id: n0
+    image_definition: nxos.9.3.10
+    label: nxos01
+    node_definition: nxosv9000
+    ram: null
+    tags: []
+    x: -320
+    y: 0
+    interfaces:
+      - id: i0
+        label: Loopback0
+        type: loopback
+      - id: i1
+        label: mgmt0
+        slot: 0
+        type: physical
+      - id: i2
+        label: Ethernet1/1
+        slot: 1
+        type: physical
+      - id: i3
+        label: Ethernet1/2
+        slot: 2
+        type: physical
+      - id: i4
+        label: Ethernet1/3
+        slot: 3
+        type: physical
+      - id: i5
+        label: Ethernet1/4
+        slot: 4
+        type: physical
+      - id: i6
+        label: Ethernet1/5
+        slot: 5
+        type: physical
+      - id: i7
+        label: Ethernet1/6
+        slot: 6
+        type: physical
+      - id: i8
+        label: Ethernet1/7
+        slot: 7
+        type: physical
+  - boot_disk_size: null
+    configuration: |2-
+
+      !Command: show running-config
+      !Running configuration last done at: Mon Feb  6 17:35:04 2023
+      !Time: Mon Feb  6 17:35:04 2023
+      !
+      hostname nxos02
+      feature lacp
+      feature vpc
+      system default switchport
+      !
+      no password strength-check
+      username admin password 5 $5$ICDOBC$mqvAdWQwpBVHnP/vd3UJfn1pSEPb8OauThDHpeFDKf6  role network-admin
+      username cisco password 5 $5$PFNGNE$2lw45938TMrQmr9TUYBldSj6lCAFbk0Ev6iYkOdtAyB  role network-admin
+      username cisco passphrase  lifetime 99999 warntime 14 gracetime 3
+      no ip domain-lookup
+      !
+      vrf context management
+      vpc domain 101
+        peer-switch
+        peer-keepalive destination 10.10.10.211 source 10.10.10.212
+        peer-gateway
+      !
+      interface port-channel1
+        switchport
+        switchport mode trunk
+        vpc 100
+      !
+      interface port-channel101
+        switchport
+        switchport mode trunk
+        spanning-tree port type network
+        vpc peer-link
+      !
+      interface Ethernet1/1
+        switchport
+        switchport mode trunk
+        channel-group 101 mode active
+      !
+      interface Ethernet1/2
+        switchport
+        switchport mode trunk
+        channel-group 1 mode active
+      !
+      interface Ethernet1/3
+        switchport
+        switchport mode trunk
+        channel-group 1 mode active
+      !
+      interface mgmt0
+        vrf member management
+        ip address 10.10.10.212/24
+      icam monitor scale
+      !
+      boot nxos bootflash:/nxos.9.3.10.bin sup-1
+      logging console
+    cpu_limit: null
+    cpus: null
+    data_volume: null
+    hide_links: false
+    id: n1
+    image_definition: nxos.9.3.10
+    label: nxos02
+    node_definition: nxosv9000
+    ram: null
+    tags: []
+    x: -320
+    y: 160
+    interfaces:
+      - id: i0
+        label: Loopback0
+        type: loopback
+      - id: i1
+        label: mgmt0
+        slot: 0
+        type: physical
+      - id: i2
+        label: Ethernet1/1
+        slot: 1
+        type: physical
+      - id: i3
+        label: Ethernet1/2
+        slot: 2
+        type: physical
+      - id: i4
+        label: Ethernet1/3
+        slot: 3
+        type: physical
+      - id: i5
+        label: Ethernet1/4
+        slot: 4
+        type: physical
+      - id: i6
+        label: Ethernet1/5
+        slot: 5
+        type: physical
+      - id: i7
+        label: Ethernet1/6
+        slot: 6
+        type: physical
+      - id: i8
+        label: Ethernet1/7
+        slot: 7
+        type: physical
+      - id: i9
+        label: Ethernet1/8
+        slot: 8
+        type: physical
+      - id: i10
+        label: Ethernet1/9
+        slot: 9
+        type: physical
+      - id: i11
+        label: Ethernet1/10
+        slot: 10
+        type: physical
+      - id: i12
+        label: Ethernet1/11
+        slot: 11
+        type: physical
+  - boot_disk_size: null
+    configuration: |2-
+
+      !Command: show running-config
+      !Running configuration last done at: Mon Feb  6 17:37:04 2023
+      !Time: Mon Feb  6 17:37:05 2023
+      !
+      hostname nxos03
+      feature lacp
+      feature vpc
+      system default switchport
+      !
+      no password strength-check
+      username admin password 5 $5$FHFCCN$IXUxlR/oKzEMtZJ7o8/zourVFjOzom/VovlJdwFFVs8  role network-admin
+      username cisco password 5 $5$BPNPKI$gwn6L7J18d.SGz5CUcm4nf8SqLKRn1En87WXb1BAsO8  role network-admin
+      username cisco passphrase  lifetime 99999 warntime 14 gracetime 3
+      no ip domain-lookup
+      !
+      vrf context management
+      vpc domain 201
+        peer-switch
+        peer-keepalive destination 10.10.10.214 source 10.10.10.213
+        peer-gateway
+      !
+      interface port-channel1
+        switchport
+        switchport mode trunk
+        vpc 100
+      !
+      interface port-channel201
+        switchport
+        switchport mode trunk
+        spanning-tree port type network
+        vpc peer-link
+      !
+      interface Ethernet1/1
+        switchport
+        switchport mode trunk
+        channel-group 201 mode active
+      !
+      interface Ethernet1/2
+        switchport
+        switchport mode trunk
+        channel-group 1 mode active
+      !
+      interface Ethernet1/3
+        switchport
+        switchport mode trunk
+        channel-group 1 mode active
+      !
+      interface mgmt0
+        vrf member management
+        ip address 10.10.10.213/24
+      icam monitor scale
+      !
+      boot nxos bootflash:/nxos.9.3.10.bin sup-1
+      logging console
+    cpu_limit: null
+    cpus: null
+    data_volume: null
+    hide_links: false
+    id: n2
+    image_definition: nxos.9.3.10
+    label: nxos03
+    node_definition: nxosv9000
+    ram: null
+    tags: []
+    x: 0
+    y: 0
+    interfaces:
+      - id: i0
+        label: Loopback0
+        type: loopback
+      - id: i1
+        label: mgmt0
+        slot: 0
+        type: physical
+      - id: i2
+        label: Ethernet1/1
+        slot: 1
+        type: physical
+      - id: i3
+        label: Ethernet1/2
+        slot: 2
+        type: physical
+      - id: i4
+        label: Ethernet1/3
+        slot: 3
+        type: physical
+      - id: i5
+        label: Ethernet1/4
+        slot: 4
+        type: physical
+      - id: i6
+        label: Ethernet1/5
+        slot: 5
+        type: physical
+      - id: i7
+        label: Ethernet1/6
+        slot: 6
+        type: physical
+      - id: i8
+        label: Ethernet1/7
+        slot: 7
+        type: physical
+  - boot_disk_size: null
+    configuration: |2-
+
+      !Command: show running-config
+      !Running configuration last done at: Mon Feb  6 17:35:16 2023
+      !Time: Mon Feb  6 17:35:17 2023
+      !
+      hostname nxos04
+      feature lacp
+      feature vpc
+      system default switchport
+      !
+      no password strength-check
+      username admin password 5 $5$NBDGDG$v6LjutwyZKKYaLePtbkdntS0FcqD9dubZjrJfQGBHC2  role network-admin
+      username cisco password 5 $5$JBCAMM$lUWgImD0tW98x4tlNK5HpTwY5fTMDc5r/zzoycLIiE4  role network-admin
+      username cisco passphrase  lifetime 99999 warntime 14 gracetime 3
+      no ip domain-lookup
+      !
+      vrf context management
+      vpc domain 201
+        peer-switch
+        peer-keepalive destination 10.10.10.213 source 10.10.10.214
+        peer-gateway
+      !
+      interface port-channel1
+        switchport
+        switchport mode trunk
+        vpc 100
+      !
+      interface port-channel201
+        switchport
+        switchport mode trunk
+        spanning-tree port type network
+        vpc peer-link
+      !
+      interface Ethernet1/1
+        switchport
+        switchport mode trunk
+        channel-group 201 mode active
+      !
+      interface Ethernet1/2
+        switchport
+        switchport mode trunk
+        channel-group 1 mode active
+      !
+      interface Ethernet1/3
+        switchport
+        switchport mode trunk
+        channel-group 1 mode active
+      !
+      interface mgmt0
+        vrf member management
+        ip address 10.10.10.214/24
+      !
+      boot nxos bootflash:/nxos.9.3.10.bin sup-1
+      logging console
+    cpu_limit: null
+    cpus: null
+    data_volume: null
+    hide_links: false
+    id: n3
+    image_definition: nxos.9.3.10
+    label: nxos04
+    node_definition: nxosv9000
+    ram: null
+    tags: []
+    x: 0
+    y: 160
+    interfaces:
+      - id: i0
+        label: Loopback0
+        type: loopback
+      - id: i1
+        label: mgmt0
+        slot: 0
+        type: physical
+      - id: i2
+        label: Ethernet1/1
+        slot: 1
+        type: physical
+      - id: i3
+        label: Ethernet1/2
+        slot: 2
+        type: physical
+      - id: i4
+        label: Ethernet1/3
+        slot: 3
+        type: physical
+      - id: i5
+        label: Ethernet1/4
+        slot: 4
+        type: physical
+      - id: i6
+        label: Ethernet1/5
+        slot: 5
+        type: physical
+      - id: i7
+        label: Ethernet1/6
+        slot: 6
+        type: physical
+      - id: i8
+        label: Ethernet1/7
+        slot: 7
+        type: physical
+  - boot_disk_size: null
+    configuration: bridge1
+    cpu_limit: null
+    cpus: null
+    data_volume: null
+    hide_links: false
+    id: n4
+    image_definition: null
+    label: ext-conn-0
+    node_definition: external_connector
+    ram: null
+    tags: []
+    x: -160
+    y: -200
+    interfaces:
+      - id: i0
+        label: port
+        slot: 0
+        type: physical
+  - boot_disk_size: null
+    configuration: ums-99f5f736-35
+    cpu_limit: null
+    cpus: null
+    data_volume: null
+    hide_links: false
+    id: n5
+    image_definition: null
+    label: MGMT SWITCH
+    node_definition: unmanaged_switch
+    ram: null
+    tags: []
+    x: -160
+    y: -120
+    interfaces:
+      - id: i0
+        label: port0
+        slot: 0
+        type: physical
+      - id: i1
+        label: port1
+        slot: 1
+        type: physical
+      - id: i2
+        label: port2
+        slot: 2
+        type: physical
+      - id: i3
+        label: port3
+        slot: 3
+        type: physical
+      - id: i4
+        label: port4
+        slot: 4
+        type: physical
+      - id: i5
+        label: port5
+        slot: 5
+        type: physical
+      - id: i6
+        label: port6
+        slot: 6
+        type: physical
+      - id: i7
+        label: port7
+        slot: 7
+        type: physical
+      - id: i8
+        label: port8
+        slot: 8
+        type: physical
+      - id: i9
+        label: port9
+        slot: 9
+        type: physical
+      - id: i10
+        label: port10
+        slot: 10
+        type: physical
+      - id: i11
+        label: port11
+        slot: 11
+        type: physical
+  - boot_disk_size: null
+    configuration: |-
+      # this is a shell script which will be sourced at boot
+      hostname client101
+      # configurable user account
+      USERNAME=cisco
+      PASSWORD=cisco
+      echo "auto eth0" > /etc/network/interfaces
+      echo "iface eth0 inet static" >> /etc/network/interfaces
+      echo "       address 172.16.16.101" >> /etc/network/interfaces
+      echo "       netmask 255.255.255.0" >> /etc/network/interfaces
+      /etc/init.d/networking restart
+    cpu_limit: null
+    cpus: null
+    data_volume: null
+    hide_links: false
+    id: n6
+    image_definition: null
+    label: client101
+    node_definition: alpine
+    ram: null
+    tags: []
+    x: -480
+    y: 0
+    interfaces:
+      - id: i0
+        label: eth0
+        slot: 0
+        type: physical
+  - boot_disk_size: null
+    configuration: |-
+      # this is a shell script which will be sourced at boot
+      hostname client102
+      # configurable user account
+      USERNAME=cisco
+      PASSWORD=cisco
+      echo "auto eth0" > /etc/network/interfaces
+      echo "iface eth0 inet static" >> /etc/network/interfaces
+      echo "       address 172.16.16.102" >> /etc/network/interfaces
+      echo "       netmask 255.255.255.0" >> /etc/network/interfaces
+      /etc/init.d/networking restart
+    cpu_limit: null
+    cpus: null
+    data_volume: null
+    hide_links: false
+    id: n7
+    image_definition: null
+    label: client102
+    node_definition: alpine
+    ram: null
+    tags: []
+    x: -480
+    y: 160
+    interfaces:
+      - id: i0
+        label: eth0
+        slot: 0
+        type: physical
+  - boot_disk_size: null
+    configuration: |-
+      # this is a shell script which will be sourced at boot
+      hostname client201
+      # configurable user account
+      USERNAME=cisco
+      PASSWORD=cisco
+      echo "auto eth0" > /etc/network/interfaces
+      echo "iface eth0 inet static" >> /etc/network/interfaces
+      echo "       address 172.16.16.201" >> /etc/network/interfaces
+      echo "       netmask 255.255.255.0" >> /etc/network/interfaces
+      /etc/init.d/networking restart
+    cpu_limit: null
+    cpus: null
+    data_volume: null
+    hide_links: false
+    id: n8
+    image_definition: null
+    label: client201
+    node_definition: alpine
+    ram: null
+    tags: []
+    x: 160
+    y: 0
+    interfaces:
+      - id: i0
+        label: eth0
+        slot: 0
+        type: physical
+  - boot_disk_size: null
+    configuration: |-
+      # this is a shell script which will be sourced at boot
+      hostname client202
+      # configurable user account
+      USERNAME=cisco
+      PASSWORD=cisco
+      echo "auto eth0" > /etc/network/interfaces
+      echo "iface eth0 inet static" >> /etc/network/interfaces
+      echo "       address 172.16.16.202" >> /etc/network/interfaces
+      echo "       netmask 255.255.255.0" >> /etc/network/interfaces
+      /etc/init.d/networking restart
+    cpu_limit: null
+    cpus: null
+    data_volume: null
+    hide_links: false
+    id: n9
+    image_definition: null
+    label: client202
+    node_definition: alpine
+    ram: null
+    tags: []
+    x: 160
+    y: 160
+    interfaces:
+      - id: i0
+        label: eth0
+        slot: 0
+        type: physical
+annotations:
+  - border_color: '#808080FF'
+    border_radius: 0
+    border_style: ''
+    color: '#04C0FFFF'
+    thickness: 1
+    type: rectangle
+    x1: -400.0
+    y1: -80.0
+    x2: 240.0
+    y2: 320.0
+    z_index: 0
+  - border_color: '#808080FF'
+    border_radius: 0
+    border_style: ''
+    color: '#04FF6BFF'
+    thickness: 1
+    type: rectangle
+    x1: -160.0
+    y1: -80.0
+    x2: 240.0
+    y2: 320.0
+    z_index: 0
+  - border_color: '#808080FF'
+    border_radius: 0
+    border_style: ''
+    color: '#FD9500FF'
+    thickness: 1
+    type: rectangle
+    x1: -560.0
+    y1: -80.0
+    x2: 160.0
+    y2: 320.0
+    z_index: 1
+  - border_color: '#808080FF'
+    border_radius: 0
+    border_style: ''
+    color: '#FD9500FF'
+    thickness: 1
+    type: rectangle
+    x1: 80.0
+    y1: -80.0
+    x2: 160.0
+    y2: 320.0
+    z_index: 1
+  - border_color: '#00000000'
+    border_style: ''
+    color: '#FFFFFFFF'
+    rotation: 0
+    text_bold: true
+    text_content: VPC DOMAIN 101
+    text_font: monospace
+    text_italic: false
+    text_size: 12
+    text_unit: pt
+    thickness: 1
+    type: text
+    x1: -360.0
+    y1: -80.0
+    z_index: 2
+  - border_color: '#00000000'
+    border_style: ''
+    color: '#FFFFFFFF'
+    rotation: 0
+    text_bold: true
+    text_content: VPC DOMAIN 201
+    text_font: monospace
+    text_italic: false
+    text_size: 12
+    text_unit: pt
+    thickness: 1
+    type: text
+    x1: -80.0
+    y1: -80.0
+    z_index: 2
+  - border_color: '#00000000'
+    border_style: ''
+    color: '#FFFFFFFF'
+    rotation: 0
+    text_bold: true
+    text_content: ACCESS
+    text_font: monospace
+    text_italic: false
+    text_size: 12
+    text_unit: pt
+    thickness: 1
+    type: text
+    x1: 120.0
+    y1: -80.0
+    z_index: 2
+  - border_color: '#00000000'
+    border_style: ''
+    color: '#FFFFFFFF'
+    rotation: 0
+    text_bold: true
+    text_content: ACCESS
+    text_font: monospace
+    text_italic: false
+    text_size: 12
+    text_unit: pt
+    thickness: 1
+    type: text
+    x1: -520.0
+    y1: -80.0
+    z_index: 2

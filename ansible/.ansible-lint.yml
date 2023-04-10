@@ -1,0 +1,11 @@
+---
+skip_list: []
+use_default_rules: true
+verbosity: 1
+rulesdir: []
+
+# Add the rules you want to use for minimal linting
+warn_list:
+  - internal-error
+  - parse-error
+  - syntax-check[specific]

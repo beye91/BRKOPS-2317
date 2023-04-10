@@ -1,0 +1,61 @@
+---
+
+NXOS01:
+  feature:
+    - feature_name: interface-vlan
+  vlan:
+    - vlan_id: 172
+      vlan_name: "VLAN172"
+  interfaces:
+    - name: Ethernet1/4
+      type: access
+      vlan: 172
+  interface_vlan:
+    - name: vlan 172
+      address: 172.16.16.211
+      netmask: 255.255.255.0
+
+NXOS02:
+  feature:
+    - feature_name: interface-vlan
+  vlan:
+    - vlan_id: 172
+      vlan_name: "VLAN172"
+  interfaces:
+    - name: Ethernet1/4
+      type: access
+      vlan: 172
+  interface_vlan:
+    - name: vlan 172
+      address: 172.16.16.212
+      netmask: 255.255.255.0
+
+NXOS03:
+  feature:
+    - feature_name: interface-vlan
+  vlan:
+    - vlan_id: 172
+      vlan_name: "VLAN172"
+  interfaces:
+    - name: Ethernet1/4
+      type: access
+      vlan: 172
+  interface_vlan:
+    - name: vlan 172
+      address: 172.16.16.213
+      netmask: 255.255.255.0
+
+NXOS04:
+  feature:
+    - feature_name: interface-vlan
+  vlan:
+    - vlan_id: 172
+      vlan_name: "VLAN172"
+  interfaces:
+    - name: Ethernet1/4
+      type: access
+      vlan: 172
+  interface_vlan:
+    - name: vlan 172
+      address: 172.16.16.214
+      netmask: 255.255.255.0

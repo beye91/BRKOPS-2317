@@ -1,0 +1,8 @@
+---
+
+ansible_network_os: cisco.nxos.nxos
+ansible_connection: ansible.netcommon.network_cli
+ansible_port: 22
+ansible_user: admin
+ansible_password: cisco
+ansible_become_method: enable

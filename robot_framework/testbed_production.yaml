@@ -1,49 +1,39 @@
+testbed:
+  credentials:
+    default:
+      username: admin
+      password: cisco
+
 devices:
   nxos01:
-    type: nxos
+    alias: nxos01
+    type: nexus
     os: nxos
-    credentials:
-      default:
-        username: admin
-        password: cisco
     connections:
-      cli:
+      vty:
         protocol: ssh
-        ip: "10.10.10.201"
-        port: 22 
+        ip: 10.10.10.201
   nxos02:
-    type: nxos
+    alias: nxos02
+    type: nexus
     os: nxos
-    credentials:
-      default:
-        username: admin
-        password: cisco
     connections:
-      cli:
+      vty:
         protocol: ssh
-        ip: "10.10.10.202"
-        port: 22 
+        ip: 10.10.10.202
   nxos03:
-    type: nxos
+    alias: nxos03
+    type: nexus
     os: nxos
-    credentials:
-      default:
-        username: admin
-        password: cisco
     connections:
-      cli:
+      vty:
         protocol: ssh
-        ip: "10.10.10.203"
-        port: 22 
+        ip: 10.10.10.203
   nxos04:
-    type: nxos
+    alias: nxos04
+    type: nexus
     os: nxos
-    credentials:
-      default:
-        username: admin
-        password: cisco
     connections:
-      cli:
+      vty:
         protocol: ssh
-        ip: "10.10.10.204"
-        port: 22
+        ip: 10.10.10.204

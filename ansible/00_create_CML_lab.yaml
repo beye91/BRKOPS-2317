@@ -1,0 +1,53 @@
+- name: Build the topology
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    cml_lab_file: data/brkops-2317_digital-twin.yaml
+    cml_lab: BRKOPS-2317_DIGITAL-TWIN
+    startup: 'all'
+    wait: 'no'
+    cml_login: &cml_login
+      host: 10.122.49.111
+      user: admin
+      password: C!sco123
+
+  tasks:
+    - name: Check for the lab file # Check lab file exists
+      ansible.builtin.stat:
+        path: "{{ cml_lab_file }}"
+      register: stat_result
+      delegate_to: localhost
+
+    - name: Check for the CML host, credentials, and topology file # Check CML host, credentials, and topology file are defined
+      ansible.builtin.assert:
+        that:
+          - stat_result.stat.exists
+          - cml_login.host != ""
+          - cml_login.user != ""
+          - cml_login.password != ""
+          - cml_lab != ""
+        msg: "CML host, credentials, and topology file are required.  Verify the requirements in README are met."
+      delegate_to: localhost
+
+    - name: Create the lab # Create the lab
+      cisco.cml.cml_lab:
+        <<: *cml_login
+        lab: "{{ cml_lab }}"
+        state: "{{ 'started' if startup == 'all' else 'present' }}"
+        file: "{{ cml_lab_file }}"
+        topology: "{{ lookup('template', cml_lab_file) }}"
+        wait: "True"
+      register: results
+
+    - name: Check to see if the Lab is there # Check to see if the Lab is there
+      cisco.cml.cml_lab_facts:
+        <<: *cml_login
+        lab: "{{ cml_lab }}"
+      register: cml_lab_facts
+      when: wait | bool
+
+    - name: Pause for 15 minutes
+      ansible.builtin.pause:
+        minutes: 15
