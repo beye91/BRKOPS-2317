@@ -10,12 +10,14 @@ variables:
 
 stages:
   - build 
+  - linting
   - create_digital-twin
-  - validate_ansible_syntax
-  - configure_devices_digital-twin
+  - configure_digital-twin
   - test_digital-twin
-  - configure_devices_prod
+  - configure_production
   - test_production
+  - delete_digital-twin
+
 build_image:
   stage: build
   tags:
@@ -34,87 +36,113 @@ push_image:
   script:
     - docker push $IMAGE_NAME_ANSIBLE:$IMAGE_TAG_ANSIBLE
 
-run_create_digital-twin:
-  stage: create_digital-twin
+ansible_linting:
+  stage: linting
+  image: $IMAGE_NAME_ANSIBLE:$IMAGE_TAG_ANSIBLE
+  needs: 
+    - push_image
   tags:
-    - local-runner
-  script: 
-    - ./cml_create_digital-twin.sh -d -f
-
-run_wait:
-  stage: create_digital-twin
-  needs:
-    - run_create_digital-twin
-  tags:
-    - local-runner
-  script: 
-    - sleep 20
-
-validate_ansible_syntax:
-  stage: validate_ansible_syntax
-  needs:
-    - run_wait
-  tags:
-    - local-runner
+    - docker-runner
   before_script:
     - cd ansible
-  script:
-    - ansible-playbook 01_interface_configuration.yaml --syntax-check
+  script: 
+    - ansible-lint --profile=min 00_create_CML_lab.yaml
 
-configure_devices_digital-twin:
-  stage: configure_devices_digital-twin
-  needs:
-    - validate_ansible_syntax
+
+create_digital-twin:
+  stage: create_digital-twin
+  image: $IMAGE_NAME_ANSIBLE:$IMAGE_TAG_ANSIBLE
+  needs: 
+    - ansible_linting
+  environment: CML
   tags:
-    - local-runner
+    - docker-runner
   before_script:
     - cd ansible
-  script:
-    - ansible-playbook 01_interface_configuration.yaml --extra-vars "host_var=digital_twin"
+    - unset http_proxy 
+    - unset http_proxys
+  script: 
+    - ansible-playbook 00_create_CML_lab.yaml
 
-run_test_interface_digital-twin:
+configure_digital-twin:
+  stage: create_digital-twin
+  image: $IMAGE_NAME_ANSIBLE:$IMAGE_TAG_ANSIBLE
+  needs: 
+    - create_digital-twin
+  environment: CML
+  tags:
+    - docker-runner
+  before_script:
+    - cd ansible
+  script: 
+    - ansible-playbook 01_config_devices.yaml -i inventory_digital-twin --extra-vars "host_var=digital_twin"
+
+testcases_digital-twin:
   stage: test_digital-twin
+  image: $IMAGE_NAME_ANSIBLE:$IMAGE_TAG_ANSIBLE
   needs:
-    - configure_devices_digital-twin
+    - configure_digital-twin
+  environment: CML
   tags:
-    - local-runner
+    - docker-runner
   before_script:
     - cd robot_framework
+    - mkdir reports_digital-twin
   script:
-    - robot --outputdir /tmp/robot_framework_reports server_port_digital-twin.robot
+    - robot --outputdir reports_digital-twin/ testcases_digital-twin.robot
   artifacts:
     untracked: false
     when: always
     expire_in: "1 days"
     paths:
-      - "tmp/robot_framework_reports/log.html"
-      - "tmp/robot_framework_reports/report.html"
+      - "$CI_BUILDS_DIR/$CI_PROJECT_PATH/robot_framework/reports_digital-twin/log.html"
+      - "$CI_BUILDS_DIR/$CI_PROJECT_PATH/robot_framework/reports_digital-twin/report.html"
 
-run_configure_devices_prod:
-  stage: configure_devices_prod
-  needs:
-    - run_test_interface_digital-twin
+configure_production:
+  stage: configure_production
+  image: $IMAGE_NAME_ANSIBLE:$IMAGE_TAG_ANSIBLE
+  needs: 
+    - testcases_digital-twin
+  environment: CML
   tags:
-    - local-runner
+    - docker-runner
   before_script:
     - cd ansible
   script: 
-    - ansible-playbook 01_interface_configuration.yaml --extra-vars "host_var=production"
+    - ansible-playbook 01_config_devices.yaml -i inventory_production --extra-vars "host_var=production"
 
-run_test_interface_production:
+testcases_production:
   stage: test_production
+  image: $IMAGE_NAME_ANSIBLE:$IMAGE_TAG_ANSIBLE
   needs:
-    - run_configure_devices_prod
+    - configure_production
+  environment: CML
   tags:
-    - local-runner
+    - docker-runner
   before_script:
     - cd robot_framework
+    - mkdir reports_production
   script:
-    - robot --outputdir /tmp/robot_framework_reports server_port_production.robot
+    - robot --outputdir reports_production/ testcases_production.robot
   artifacts:
     untracked: false
     when: always
     expire_in: "1 days"
     paths:
-      - "tmp/robot_framework_reports/log.html"
-      - "tmp/robot_framework_reports/report.html"
+      - "$CI_BUILDS_DIR/$CI_PROJECT_PATH/robot_framework/reports_production/log.html"
+      - "$CI_BUILDS_DIR/$CI_PROJECT_PATH/robot_framework/reports_production/report.html"
+
+delete_digital-twin:
+  stage: delete_digital-twin
+  image: $IMAGE_NAME_ANSIBLE:$IMAGE_TAG_ANSIBLE
+  needs: 
+    - testcases_production
+  environment: CML
+  tags:
+    - docker-runner
+  before_script:
+    - cd ansible
+    - unset http_proxy 
+    - unset http_proxys
+  script: 
+    - ansible-playbook 02_delete_CML_lab.yaml
