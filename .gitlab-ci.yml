@@ -46,7 +46,7 @@ ansible_linting:
   before_script:
     - cd ansible
   script: 
-    - ansible-lint --profile=min 00_create_CML_lab.yaml
+    - ansible-lint --profile=min *.yaml
 
 
 create_digital-twin:
